@@ -11,6 +11,9 @@ local flame =love.graphics.newImage('flame2.png')
 local scaleXF, scaleYF = getImageScaleForNewDimensions( flame, 200, 200 )
 local pom
 
+local player=love.graphics.newImage('player.png')
+local scaleXP,scaleYP=getImageScaleForNewDimensions( player, 50, 100 )
+
 
 
 function love.load()
@@ -26,6 +29,10 @@ function love.load()
     barrle2X = playingAreaWidth +200
     flameX = playingAreaWidth +100
 
+    playerY=playingAreaHeight+50
+    playerX=10
+    playerWidth=50
+    playerHeight=100
 
     barrleSpaceHeight = 100
     barrleWidth = 54
@@ -45,6 +52,11 @@ function love.load()
             flameX = playingAreaWidth + love.math.random(200,300)  + 100
         end
         resetFlame()
+
+        function resetPlayer()
+            playerY=playingAreaHeight+50
+        end
+    
 
 end
 
@@ -85,6 +97,16 @@ function love.keypressed(key)
     if key=="space" then  --test if statement just for decrising live to test 'menu' 
         lives=lives-1
     end
+    if key=="down" then
+        if playerY+10<playingAreaHeight then
+            playerY=playerY+10
+        end
+    elseif key=="up" then
+        if playerY-10>playingAreaHeight-100 then
+            playerY=playerY-10
+        end
+    end
+    
 end
 
 
@@ -112,6 +134,7 @@ love.graphics.draw( bacground, 0, 0, rotation, scaleX, scaleY )
         love.graphics.draw( barrle, barrleX, barrleSpaceY,0, scaleXB, scaleYB )
         love.graphics.draw( barrle,barrle2X, barrleSpaceY,0, scaleXB, scaleYB )
         love.graphics.draw( flame,flameX, 200,0, scaleXF, scaleYF )
+        love.graphics.draw( player,playerX,playerY ,0, scaleXP, scaleYP )
     end
 
 end
@@ -122,5 +145,12 @@ function love.mousepressed(x,y,button,istouch,press) --function to start the gam
         lives=3
         score=0
     end
+
+end
+
+function collisionCheck(x,y,w,h) --function gets x,y, width, height of obstacle
+    return playerX < x+w and x < playerX + playerWidth and
+    playerY < y+h and y < playerY +playerHeight
+
 
 end
