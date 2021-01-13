@@ -26,8 +26,10 @@ function love.load()
     playingAreaHeight = 388
 
     barrleX = playingAreaWidth
-    barrle2X = playingAreaWidth +200
+    barrleSpeed=100
+    --barrle2X = playingAreaWidth +200
     flameX = playingAreaWidth +100
+    flameSpeed=200
 
     playerY=playingAreaHeight+50
     playerX=10
@@ -43,10 +45,10 @@ function love.load()
         end
         resetBarrle()
 
-        function resetBarrle2()
-            barrle2X = playingAreaWidth + love.math.random(200,300)  + 100
-        end
-        resetBarrle2()
+        --function resetBarrle2()
+          --  barrle2X = playingAreaWidth + love.math.random(200,300)  + 100
+        --end
+        --resetBarrle2()
 
         function resetFlame()
             flameX = playingAreaWidth + love.math.random(200,300)  + 100
@@ -62,20 +64,20 @@ end
 
 function love.update(dt)
 
-
-     barrleX = barrleX - (100 * dt)
+     barrleSpeed=barrleSpeed+(dt*5)
+     barrleX = barrleX - (barrleSpeed * dt)
      if (barrleX + barrleWidth) < -130 then
             resetBarrle()
         end
 
-    barrle2X = barrle2X - (100 * dt)
-    if (barrle2X + barrleWidth) < -130 then
-           resetBarrle2()
-       end
+   -- barrle2X = barrle2X - (100 * dt)
+   -- if (barrle2X + barrleWidth) < -130 then
+     --      resetBarrle2()
+      -- end
 
 
-
-       flameX = flameX - (100 * dt)
+      flameSpeed=flameSpeed+(dt*10)
+    flameX = flameX - (flameSpeed * dt)
        if (flameX + flameWidth) < 10 then
               resetFlame()
           end
@@ -132,7 +134,7 @@ love.graphics.draw( bacground, 0, 0, rotation, scaleX, scaleY )
     if gameState==2 then
     
         love.graphics.draw( barrle, barrleX, barrleSpaceY,0, scaleXB, scaleYB )
-        love.graphics.draw( barrle,barrle2X, barrleSpaceY,0, scaleXB, scaleYB )
+        --love.graphics.draw( barrle,barrle2X, barrleSpaceY,0, scaleXB, scaleYB )
         love.graphics.draw( flame,flameX, 200,0, scaleXF, scaleYF )
         love.graphics.draw( player,playerX,playerY ,0, scaleXP, scaleYP )
     end
