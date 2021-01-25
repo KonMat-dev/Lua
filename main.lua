@@ -11,9 +11,11 @@ local flame =love.graphics.newImage('flame2.png')
 local scaleXF, scaleYF = getImageScaleForNewDimensions( flame, 200, 200 )
 local pom
 
-local player=love.graphics.newImage('player.png')
-local scaleXP,scaleYP=getImageScaleForNewDimensions( player, 50, 100 )
+local player=love.graphics.newImage('animation/run (1).png')
+local scaleXP,scaleYP=getImageScaleForNewDimensions( player, 120, 120 )
 
+local jump=love.graphics.newImage('animation/jump (6).png')
+local scaleXJ,scaleYJ=getImageScaleForNewDimensions( jump, 120, 120 )
 
 
 function love.load()
@@ -24,6 +26,13 @@ function love.load()
     sounds.music:play()
     sounds.isPlaying=1;
     sounds.musicImage=love.graphics.newImage('music_on.png')
+
+
+    runSprites={}
+    for i=1,8 do
+      table.insert(runSprites,love.graphics.newImage("animation/run ("..i..").png"))
+    end
+    currentFrame = 1
 
     gameState = 1   -- 1-menu   2-play
     gameFont=love.graphics.newFont(40)  
@@ -100,6 +109,10 @@ function love.update(dt)
     end
 
 
+    currentFrame = currentFrame + 10 * dt
+    if currentFrame >= 6 then
+        currentFrame = 1
+    end
 
 end
 
@@ -153,7 +166,11 @@ love.graphics.draw( bacground, 0, 0, rotation, scaleX, scaleY )
         love.graphics.draw( barrle, barrleX, barrleSpaceY,0, scaleXB, scaleYB )
         --love.graphics.draw( barrle,barrle2X, barrleSpaceY,0, scaleXB, scaleYB )
         love.graphics.draw( flame,flameX, 200,0, scaleXF, scaleYF )
-        love.graphics.draw( player,playerX,playerY ,0, scaleXP, scaleYP )
+        if love.keyboard.isDown("up") then
+          love.graphics.draw(jump,playerX,playerY ,0, scaleXJ, scaleYJ )
+        else
+          love.graphics.draw( runSprites[math.floor(currentFrame)],playerX,playerY ,0, scaleXP, scaleYP )
+        end
     end
 
 end
