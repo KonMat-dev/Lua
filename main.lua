@@ -17,6 +17,14 @@ local scaleXP,scaleYP=getImageScaleForNewDimensions( player, 50, 100 )
 
 
 function love.load()
+    sounds={}
+    sounds.music=love.audio.newSource("music/music.mp3","stream")
+    sounds.music:setLooping(true)
+    sounds.music:setVolume(0.3)
+    sounds.music:play()
+    sounds.isPlaying=1;
+    sounds.musicImage=love.graphics.newImage('music_on.png')
+
     gameState = 1   -- 1-menu   2-play
     gameFont=love.graphics.newFont(40)  
     score=0
@@ -108,7 +116,16 @@ function love.keypressed(key)
             playerY=playerY-10
         end
     end
-    
+    if key=="m" then
+        sounds.isPlaying=sounds.isPlaying*-1
+        if sounds.isPlaying==-1 then
+        sounds.music:stop()
+        sounds.musicImage=love.graphics.newImage('music_off.png')
+        else 
+            sounds.music:play()
+            sounds.musicImage=love.graphics.newImage('music_on.png')
+        end
+    end
 end
 
 
@@ -121,7 +138,7 @@ love.graphics.draw( bacground, 0, 0, rotation, scaleX, scaleY )
 
       local FlameSpaceY = 300
 
-    
+    love.graphics.draw(sounds.musicImage,730,5)    
     love.graphics.setFont(gameFont)
     love.graphics.print("Score: "..math.ceil(score),5,5)
     love.graphics.print("Lives: "..lives,300,5)
