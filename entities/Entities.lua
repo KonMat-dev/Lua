@@ -23,26 +23,26 @@ function Entities:addMany(entities)
   end
 end
 
-function Entities:getFirstBarrel()
+function Entities:getFirstObstacle()
   for i, e in ipairs(self.entityList) do
-    if e:getType() == Types.barrel then
+    if e:getType() == Types.obstacle then
       return i, e
     end
   end
 end
 
-function Entities:getLeftMostBarrel()
+function Entities:getLeftMostObstacle()
   local lastEntity=self.entityList[#self.entityList]
-  if lastEntity and lastEntity:getType() == Types.barrel then
+  if lastEntity and lastEntity:getType() == Types.obstacle then
     return lastEntity
   else
     return nil
   end
 end 
 
-function Entities:removeFirstBarrel()
-  local i, e = self:getFirstBarrel()
-  assert(e:getType() == Types.barrel)
+function Entities:removeFirstObstacle()
+  local i, e = self:getFirstObstacle()
+  assert(e:getType() == Types.obstacle)
   if e:offScreen() then
     table.remove(self.entityList, i)
     self.world:remove(e)

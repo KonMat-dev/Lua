@@ -9,7 +9,7 @@ local IndianaJones = {}
 
 local Player    = require("entities.player")
 local Ground  = require("entities.ground")
-local Barrel = require("entities.barrel")
+local Obstacle = require("entities.obstacle")
 
 local FNAME = "scores"
 local MAX_ENTRIES = 5
@@ -20,10 +20,11 @@ function getImageScaleForNewDimensions( image, newWidth, newHeight )
     return ( newWidth / currentWidth ), ( newHeight / currentHeight )
 end
 
-local background=love.graphics.newImage('img/background.png')
+local background=love.graphics.newImage('img/background.jpg')
+local barrel=love.graphics.newImage('img/barrel.png')
+
 local scaleX, scaleY = getImageScaleForNewDimensions( background, 1024, 780 )
 
-local levelDiff = 150
 local baseSpeed = 350
 
 player = nil
@@ -50,15 +51,14 @@ function IndianaJones:enter()
   local gWidth, gHeight = love.graphics.getWidth(), 100
   local gX, gY  = 0, love.graphics.getHeight() - gHeight
   ground = Ground(self.world, gX, gY, gWidth, gHeight)
-  local pWidth, pHeight = 30, 100
-  local pX, pY = 40, gY - pHeight
+  local pWidth, pHeight = 50, 120
+  local pX, pY = 60, gY - pHeight
   player = Player(self.world, pX, pY, pWidth, pHeight)
 
   self.groundY = gY
   self.paused = false
   self.score = 0
   self.scoreTable = {}
-  self.level = 1 
   self.speed = baseSpeed 
 
   Entities:addMany({player, ground})
@@ -66,10 +66,11 @@ end
 
 function IndianaJones:update(dt)
   if not Entities:gameover() and not self.paused then
-    self:shouldAddBarrel()
+    self:shouldAddObstacle()
     Entities:update(dt)
     self:updateScore()
-    Entities:removeFirstBarrel()
+    self:updateSpeed()
+    Entities:removeFirstObstacle()
   end
 end
 
@@ -79,31 +80,45 @@ end
 
 
 
-function IndianaJones:shouldAddBarrel()
-  lastBarrel = Entities:getLeftMostBarrel()
-  -- local level = Levels[self.level]
-  local dist = 500
+function IndianaJones:updateSpeed()
+  local increase = (self.score/5)*1
+  self.speed=math.min(baseSpeed+increase,600)
+end
 
-  if lastBarrel then
-    fromEdgeDist = love.graphics.getWidth() - lastBarrel:rightPosition()
+
+
+function IndianaJones:shouldAddObstacle()
+  lastObstacle = Entities:getLeftMostObstacle()
+  local dist = love.math.random(300,700)
+  
+  if lastObstacle then
+    fromEdgeDist = love.graphics.getWidth() - lastObstacle:rightPosition()
     if fromEdgeDist > dist then
-      self:addBarrel()
+      self:addObstacle()
     end
   else
-    self:addBarrel()
+    self:addObstacle()
   end
 end
 
-function IndianaJones:addBarrel()
-  -- local level = Levels[self.level]
-  local width = 50
-  local height = 75
-  local y = self.groundY - 75
-  --if math.random() < .25 then y = y - 50 end
+function IndianaJones:addObstacle()
+  local highChance=love.math.random(1,10)
+  if highChance>7 then
+    local width = 50
+    local height = 75
+    local y = self.groundY - 180
+    newObstacle = Obstacle(self.world, love.graphics.getWidth(), y, width, height)
+    newObstacle:setSpeed(self.speed)
+    Entities:add(newObstacle)
+  else
+    local width = 50
+    local height = 75
+    local y = self.groundY - 75
+    newObstacle = Obstacle(self.world, love.graphics.getWidth(), y, width, height)
+    newObstacle:setSpeed(self.speed)
+    Entities:add(newObstacle)
+  end
 
-  newBarrel = Barrel(self.world, love.graphics.getWidth(), y, width, height)
-  newBarrel:setSpeed(self.speed)
-  Entities:add(newBarrel)
 end
 
 function IndianaJones:draw()
@@ -149,6 +164,7 @@ function IndianaJones:keyreleased(key)
   elseif key == "p" then
     self.paused = not self.paused
   elseif key == "r" then
+    sounds.music:stop()
     Gamestate.enter(IndianaJones) 
   end
   if key=="m" then

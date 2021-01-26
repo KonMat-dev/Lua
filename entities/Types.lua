@@ -2,7 +2,7 @@ local Types = {
   player="player",
   ground="ground",
   entity="entity",
-  barrel="barrel"
+  obstacle="obstacle"
 }
 
 return Types

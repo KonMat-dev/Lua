@@ -3,40 +3,36 @@ local Entity = require("entities.Entity")
 local Types = require("entities.Types")
 local Colors = require("util.Colors")
 
-local Barrel = Class{
+local Obstacle = Class{
     __includes=Entity
 }
 
-function getImageScaleForNewDimensions( image, newWidth, newHeight )
-    local currentWidth, currentHeight = image:getDimensions()
-    return ( newWidth / currentWidth ), ( newHeight / currentHeight )
-end
+local obstacle=love.graphics.newImage('img/obstacle.png')
 
-local barrel=love.graphics.newImage('img/barrel.png')
-local scaleXB, scaleYB = getImageScaleForNewDimensions( barrel, 100, 100 )
 
-function Barrel:init(world,x,y,w,h)
+
+function Obstacle:init(world,x,y,w,h)
     Entity.init(self,world,x,y,w,h)
     self.speed=500
     self.color=Colors.white
 
-    self.type=Types.barrel
+    self.type=Types.obstacle
     self.gameover=false
 end
 
-function Barrel:rightPosition()
+function Obstacle:rightPosition()
     return self.x+self.w
 end
 
-function Barrel:offScreen()
+function Obstacle:offScreen()
     return self:rightPosition()<0
 end
 
-function Barrel:setSpeed(s)
+function Obstacle:setSpeed(s)
     self.speed=s
 end
 
-function Barrel:update(dt)
+function Obstacle:update(dt)
     self.x,self.y,collisions=self.world:move(self,self.x-self.speed*dt,self.y)
 
 
@@ -47,11 +43,11 @@ function Barrel:update(dt)
     end
 end
 
-function Barrel:draw()
+function Obstacle:draw()
     
     love.graphics.setColor(unpack(self.color))
     love.graphics.rectangle("fill",self:getRect())
-    love.graphics.draw(barrel, self.x-self.w/4, self.y ,r,.25,.25)
+    love.graphics.draw(obstacle, self.x-self.w/4, self.y ,r,.25,.25)
 end
 
-return Barrel
+return Obstacle

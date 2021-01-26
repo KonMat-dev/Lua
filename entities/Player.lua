@@ -10,6 +10,10 @@ local Player = Class{
   __includes = Entity 
 }
 
+
+
+
+
 local Directions = { up = "up", down = "down", crouch = "crouch", still = "still" }
 
 function Player:init(world, x, y, w, h)
@@ -29,6 +33,17 @@ function Player:init(world, x, y, w, h)
   self.friction  = 5 
 
   self.type = Types.player
+
+  runSprites={}
+  slideSprites={}
+  for i=1,9 do
+    table.insert(runSprites,love.graphics.newImage("animation/r"..i..".png"))
+  end
+  for i=1,9 do
+    table.insert(slideSprites,love.graphics.newImage("animation/s"..i..".png"))
+  end
+  currentFrame=1
+
 
   self.gameover = false
   time = 0
@@ -73,6 +88,10 @@ function Player:update(dt)
     self.yVelocity = self.yVelocity + self.gravity * dt
   end
 
+  currentFrame = currentFrame + 10 * dt
+  if currentFrame >= 10 then
+      currentFrame = 1
+  end
 
   self:standOrCrouch()
 
@@ -111,8 +130,15 @@ function Player:setDirection(newDir)
 end
 
 function Player:draw()
-  love.graphics.rectangle("fill", self:getRect())
-  love.graphics.setColor(unpack(Colors.lightBlue))
+  -- love.graphics.rectangle("fill", self:getRect())
+  if self.y==self.crouchY then
+    love.graphics.draw(slideSprites[math.floor(currentFrame)], self.x-self.w, self.y-30 ,r,.3,.25)
+  else
+    love.graphics.draw(runSprites[math.floor(currentFrame)], self.x-self.w+5, self.y ,r,.3,.25)
+  end
+
+
+
 end
 
 function Player:keyToDir(key)
