@@ -43,7 +43,7 @@ end
 function Entities:removeFirstBarrel()
   local i, e = self:getFirstBarrel()
   assert(e:getType() == Types.barrel)
-  if e:offRight() then
+  if e:offScreen() then
     table.remove(self.entityList, i)
     self.world:remove(e)
   end

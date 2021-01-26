@@ -29,7 +29,7 @@ function Barrel:rightPosition()
 end
 
 function Barrel:offScreen()
-    return self.rightPosition<0
+    return self:rightPosition()<0
 end
 
 function Barrel:setSpeed(s)
@@ -37,7 +37,7 @@ function Barrel:setSpeed(s)
 end
 
 function Barrel:update(dt)
-    self.x,self.y,collisions=self.world.move(self,self.x-self.speed*dt,self.y)
+    self.x,self.y,collisions=self.world:move(self,self.x-self.speed*dt,self.y)
 
 
     for i, c in pairs(collisions) do
@@ -48,8 +48,10 @@ function Barrel:update(dt)
 end
 
 function Barrel:draw()
+    
     love.graphics.setColor(unpack(self.color))
-    love.graphics.rectangle("fill",self.getRect())
+    love.graphics.rectangle("fill",self:getRect())
+    love.graphics.draw(barrel, self.x-self.w/4, self.y ,r,.25,.25)
 end
 
 return Barrel

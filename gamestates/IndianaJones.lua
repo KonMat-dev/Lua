@@ -9,7 +9,7 @@ local IndianaJones = {}
 
 local Player    = require("entities.player")
 local Ground  = require("entities.ground")
--- local Barrel = require("entities.barrel")
+local Barrel = require("entities.barrel")
 
 local FNAME = "scores"
 local MAX_ENTRIES = 5
@@ -31,6 +31,13 @@ ground = nil
 
 function IndianaJones:enter()
   Entities:clear()
+  sounds={}
+  sounds.music=love.audio.newSource("music/music.mp3","stream")
+  sounds.music:setLooping(true)
+  sounds.music:setVolume(0.1)
+  sounds.music:play()
+  sounds.isPlaying=1;
+  sounds.musicImage=love.graphics.newImage('img/music_on.png')
   self:saveScore()
 
   love.graphics.setFont(love.graphics.newFont(14))
@@ -41,10 +48,10 @@ function IndianaJones:enter()
 
   Entities:enter(self.world)
   local gWidth, gHeight = love.graphics.getWidth(), 100
-  local gX, gY          = 0, love.graphics.getHeight() - gHeight
+  local gX, gY  = 0, love.graphics.getHeight() - gHeight
   ground = Ground(self.world, gX, gY, gWidth, gHeight)
-  local pWidth, pHeight = 30, 60
-  local pX, pY          = 40, gY - pHeight
+  local pWidth, pHeight = 30, 100
+  local pX, pY = 40, gY - pHeight
   player = Player(self.world, pX, pY, pWidth, pHeight)
 
   self.groundY = gY
@@ -59,10 +66,10 @@ end
 
 function IndianaJones:update(dt)
   if not Entities:gameover() and not self.paused then
-    -- self:shouldAddBarrel()
+    self:shouldAddBarrel()
     Entities:update(dt)
     self:updateScore()
-    -- Entities:removeFirstBarrel()
+    Entities:removeFirstBarrel()
   end
 end
 
@@ -72,48 +79,50 @@ end
 
 
 
--- function IndianaJones:shouldAddBarrel()
---   lastBarrel = Entities:getLeftMostBarrel()
---   -- local level = Levels[self.level]
---   -- local dist = math.random(unpack(level.dists))
+function IndianaJones:shouldAddBarrel()
+  lastBarrel = Entities:getLeftMostBarrel()
+  -- local level = Levels[self.level]
+  local dist = 500
 
---   if lastBarrel then
---     fromEdgeDist = love.graphics.getWidth() - lastBarrel:rightPos()
---     if fromEdgeDist > dist then
---       self:addBarrel()
---     end
---   else
---     self:addBarrel()
---   end
--- end
+  if lastBarrel then
+    fromEdgeDist = love.graphics.getWidth() - lastBarrel:rightPosition()
+    if fromEdgeDist > dist then
+      self:addBarrel()
+    end
+  else
+    self:addBarrel()
+  end
+end
 
--- function IndianaJones:addBarrel()
---   -- local level = Levels[self.level]
---   -- local width = math.random(unpack(level.widths))
---   -- local height = math.random(unpack(level.heights))
---   local y = self.groundY - 100
---   if math.random() < .25 then y = y - 50 end
+function IndianaJones:addBarrel()
+  -- local level = Levels[self.level]
+  local width = 50
+  local height = 75
+  local y = self.groundY - 75
+  --if math.random() < .25 then y = y - 50 end
 
---   newBarrel = Barrel(self.world, love.graphics.getWidth(), y, 100, 100)
---   newBarrel:setSpeed(self.speed)
---   Entities:add(newBarrel)
--- end
+  newBarrel = Barrel(self.world, love.graphics.getWidth(), y, width, height)
+  newBarrel:setSpeed(self.speed)
+  Entities:add(newBarrel)
+end
 
 function IndianaJones:draw()
   love.graphics.draw( background, 0, 0, rotation, scaleX, scaleY )
 
   Entities:draw()
+  love.graphics.draw(sounds.musicImage,958,5)    
+
   love.graphics.setColor(Colors.white)
   love.graphics.print(string.format("score: %d", math.floor(self.score)), 10, 10)
   -- love.graphics.print(math.floor(self.speed), 10, 25)
   if Entities:gameover() then
-    love.graphics.setColor(Colors.red)
+    love.graphics.setColor(Colors.white)
     local y = 125
     local inc = 25
     love.graphics.printf("gameover",0,y, love.graphics.getWidth(), "center")
     -- Save and display high scores
     local highscores = self:getHighscores()
-    love.graphics.setColor(Colors.green)
+    love.graphics.setColor(Colors.white)
     if #highscores < MAX_ENTRIES or self.score > highscores[#highscores] then
       love.graphics.printf(string.format("New highscore! %d", self.score),0,y + inc, love.graphics.getWidth(), "center")
     end
@@ -140,7 +149,17 @@ function IndianaJones:keyreleased(key)
   elseif key == "p" then
     self.paused = not self.paused
   elseif key == "r" then
-    Gamestate.enter(IndianaJones) -- restart
+    Gamestate.enter(IndianaJones) 
+  end
+  if key=="m" then
+    sounds.isPlaying=sounds.isPlaying*-1
+    if sounds.isPlaying==-1 then
+    sounds.music:stop()
+    sounds.musicImage=love.graphics.newImage('img/music_off.png')
+    else 
+      sounds.music:play()
+      sounds.musicImage=love.graphics.newImage('img/music_on.png')
+    end
   end
 end
 
