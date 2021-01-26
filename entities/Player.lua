@@ -78,8 +78,9 @@ function Player:update(dt)
       self.hasReachedMax = true
       self.direction = Directions.down
     end
-  end
 
+  end
+  
   self.yVelocity = self.yVelocity * (1 - math.min(dt * self.friction, 1))
 
   if self:isDirection(Directions.still) or self:isDirection(Directions.crouch) then
@@ -144,10 +145,14 @@ end
 function Player:keyToDir(key)
   if key == "up" then
     return Directions.up
-  elseif key == "down" then
+  elseif key == "down"then
     return Directions.down
   elseif key == "crouch" then
-    return Directions.crouch
+    if self.yVelocity==0 then
+      return Directions.crouch
+    else
+      return
+    end
   else
     return Directions.still
   end
