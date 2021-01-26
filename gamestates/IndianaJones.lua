@@ -21,7 +21,7 @@ function getImageScaleForNewDimensions( image, newWidth, newHeight )
 end
 
 local background=love.graphics.newImage('img/background.jpg')
-local barrel=love.graphics.newImage('img/barrel.png')
+-- local barrel=love.graphics.newImage('img/barrel.png')
 
 local scaleX, scaleY = getImageScaleForNewDimensions( background, 1024, 780 )
 
@@ -47,6 +47,7 @@ function IndianaJones:enter()
 
   self.world = bump.newWorld(16)
 
+  --rozmiar podłoża i gracza
   Entities:enter(self.world)
   local gWidth, gHeight = love.graphics.getWidth(), 100
   local gX, gY  = 0, love.graphics.getHeight() - gHeight
@@ -61,11 +62,13 @@ function IndianaJones:enter()
   self.scoreTable = {}
   self.speed = baseSpeed 
 
+  --dodawanie encji gracza i podłoża
   Entities:addMany({player, ground})
 end
 
 function IndianaJones:update(dt)
   if not Entities:gameover() and not self.paused then
+    --sprawdzamy czy mozemy dodac przeszkode
     self:shouldAddObstacle()
     Entities:update(dt)
     self:updateScore()
@@ -82,7 +85,7 @@ end
 
 function IndianaJones:updateSpeed()
   local increase = (self.score/5)*1
-  self.speed=math.min(baseSpeed+increase,600)
+  self.speed=math.min(baseSpeed+increase,900)
 end
 
 
@@ -103,6 +106,7 @@ end
 
 function IndianaJones:addObstacle()
   local highChance=love.math.random(1,10)
+  --rysowanie góry lub dołu, na górę około 25%
   if highChance>7 then
     local width = 50
     local height = 75

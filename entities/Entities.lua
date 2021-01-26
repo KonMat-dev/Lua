@@ -40,6 +40,7 @@ function Entities:getLeftMostObstacle()
   end
 end 
 
+--usuwamy z lewej, za graczem
 function Entities:removeFirstObstacle()
   local i, e = self:getFirstObstacle()
   assert(e:getType() == Types.obstacle)
