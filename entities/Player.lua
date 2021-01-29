@@ -83,7 +83,7 @@ function Player:update(dt)
   
   self.yVelocity = self.yVelocity * (1 - math.min(dt * self.friction, 1))
 
-  if self:isDirection(Directions.still) or self:isDirection(Directions.crouch) then
+  if self:isDirection(Directions.still) and self:isDirection(Directions.crouch) then
     self.yVelocity = 0
   else
     self.yVelocity = self.yVelocity + self.gravity * dt
