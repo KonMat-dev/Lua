@@ -1,0 +1,4 @@
+tutaj znajdują się biblioteki zewnętrzne odpowiedzialne za poszczególne zadania
+hump - odpowiedzialny jest za gamestate gry, za odpowiednie położenia 
+bump - odpowiedzialny jest za kolizje i grawitacje
+serpent - odpowiedzialny jest za zapis i zapamiętywanie tabeli wyników 
